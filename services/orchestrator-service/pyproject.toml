@@ -1,15 +1,14 @@
 [project]
-name = "database-service"
+name = "orchestrator-service"
 version = "0.1.0"
-description = "Service for database operations"
+description = "Service for orchestrating data sync workflows"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115.0",
     "uvicorn>=0.32.0",
+    "httpx>=0.28.0",
     "pydantic>=2.10.0",
     "pydantic-settings>=2.6.0",
-    "sqlalchemy>=2.0.0",
-    "pymysql[rsa]>=1.1.0",
 ]
 
 [project.optional-dependencies]
@@ -17,7 +16,6 @@ dev = [
     "pytest>=8.3.0",
     "pytest-asyncio>=0.24.0",
     "ruff>=0.8.0",
-    "httpx>=0.28.0",
 ]
 
 [tool.ruff]
