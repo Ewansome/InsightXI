@@ -16,29 +16,27 @@ Application for collating sports data for visualisation. Data sourced from [Spor
 -----
 ### Architecture
 
-```
-                    ┌─────────────────────────┐
-                    │  Orchestrator Service   │
-                    │       (FastAPI)         │
-                    │                         │
-    Manual ────────▶│  POST /sync/leagues     │
-    Trigger         │  POST /sync/teams       │
-                    │  POST /sync/fixtures    │
-                    └───────────┬─────────────┘
-                                │
-              ┌─────────────────┼─────────────────┐
-              ▼                                   ▼
-┌─────────────────────┐             ┌─────────────────────┐
-│  SportMonks Service │             │   Database Service  │
-│     (FastAPI)       │             │     (FastAPI)       │
-│                     │             │                     │
-│  GET /leagues       │             │  POST /leagues      │
-│  GET /teams         │             │  POST /leagues/bulk │
-│  GET /fixtures      │             │  GET /leagues/{id}  │
-└─────────┬───────────┘             └──────────┬──────────┘
-          │                                    │
-          ▼                                    ▼
-    SportMonks API                           MySQL
+```mermaid
+flowchart TB
+    trigger[Manual Trigger] --> orchestrator
+
+    subgraph orchestrator[Orchestrator Service]
+        orch_endpoints["POST /sync/leagues<br>POST /sync/teams<br>POST /sync/fixtures"]
+    end
+
+    orchestrator --> sportmonks
+    orchestrator --> database
+
+    subgraph sportmonks[SportMonks Service]
+        sm_endpoints["GET /leagues<br>GET /teams<br>GET /fixtures"]
+    end
+
+    subgraph database[Database Service]
+        db_endpoints["POST /leagues<br>POST /leagues/bulk<br>GET /leagues/{id}"]
+    end
+
+    sportmonks --> api[(SportMonks API)]
+    database --> mysql[(MySQL)]
 ```
 -----
 ### Services
@@ -93,4 +91,24 @@ services/
     ├── tests/
     ├── Dockerfile
     └── pyproject.toml
+```
+
+-----
+### Getting Started
+
+**Run with Docker/Podman (recommended):**
+```bash
+make up           # Build and start all services + MySQL
+make down         # Stop and remove all containers
+make inspect-db   # Connect to MySQL CLI
+```
+
+**Local development:**
+```bash
+make install      # Install dependencies for all services
+```
+
+**Trigger a sync:**
+```bash
+curl -X POST http://localhost:8002/sync/leagues
 ```
