@@ -1,5 +1,7 @@
-import pytest
 from unittest.mock import AsyncMock, patch
+
+import pytest
+
 from app.services.league_sync_service import LeagueSyncService
 
 

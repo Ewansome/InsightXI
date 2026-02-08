@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from app.models.sync import SyncResult
 from app.services.league_sync_service import league_sync_service
 

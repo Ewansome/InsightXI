@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.repositories.league_repository import LeagueRepository
+from app.schemas.league import BulkCreateResponse, LeagueCreate, LeagueResponse
 from app.services.league_service import LeagueService
-from app.schemas.league import LeagueCreate, LeagueResponse, BulkCreateResponse
 
 router = APIRouter(prefix="/leagues", tags=["leagues"])
 

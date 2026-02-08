@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from app.models.league import League
 from app.services.league_service import league_service
 
