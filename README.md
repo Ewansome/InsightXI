@@ -5,13 +5,12 @@ Application for collating sports data for visualisation. Data sourced from [Spor
 -----
 ### Tech Stack
 
-- **Language:** Python
-- **API Framework:** FastAPI
-- **Database:** MySQL
-- **Validation:** Pydantic
-- **Linting:** Ruff
-- **Project Manager:** uv
-- **Containerisation:** Podman/Docker
+| Category | Technology |
+|----------|------------|
+| **Backend** | Python, FastAPI, Pydantic |
+| **Database** | MySQL, SQLAlchemy |
+| **Infrastructure** | Docker, AWS ECR, GitHub Actions |
+| **Development** | uv, Ruff, pytest |
 
 -----
 ### Architecture
