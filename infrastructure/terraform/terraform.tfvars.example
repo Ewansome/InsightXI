@@ -1,0 +1,6 @@
+aws_region         = "eu-west-2"
+project_name       = "insightxi"
+environment        = "dev"
+db_username        = "admin"
+db_password        = "your-secure-password-here"
+sportmonks_api_key = "your-sportmonks-api-key"
