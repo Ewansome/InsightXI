@@ -1,4 +1,4 @@
-.PHONY: run build run-container stop-container test get-leagues get-league
+.PHONY: run build run-container stop-container test lint lint-fix get-leagues get-league
 
 SERVER_URL := http://127.0.0.1:8001
 IMAGE_NAME := database-service
@@ -19,6 +19,12 @@ stop-container:
 
 test:
 	uv run pytest tests/ -v
+
+lint:
+	uv run ruff check .
+
+lint-fix:
+	uv run ruff check . --fix
 
 get-leagues:
 	curl -s $(SERVER_URL)/leagues | python -m json.tool

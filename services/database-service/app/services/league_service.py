@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 
 from app.repositories.league_repository import LeagueRepository
-from app.schemas.league import LeagueCreate, LeagueResponse, BulkCreateResponse
+from app.schemas.league import BulkCreateResponse, LeagueCreate, LeagueResponse
 
 
 class LeagueService:

@@ -1,5 +1,5 @@
-from app.clients.sportmonks_service_client import sportmonks_service_client
 from app.clients.database_service_client import database_service_client
+from app.clients.sportmonks_service_client import sportmonks_service_client
 from app.models.sync import SyncResult
 
 

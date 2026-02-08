@@ -1,4 +1,4 @@
-.PHONY: run build run-container stop-container test sync-leagues
+.PHONY: run build run-container stop-container test lint lint-fix sync-leagues
 
 SERVER_URL := http://127.0.0.1:8002
 IMAGE_NAME := orchestrator-service
@@ -19,6 +19,12 @@ stop-container:
 
 test:
 	uv run pytest tests/ -v
+
+lint:
+	uv run ruff check .
+
+lint-fix:
+	uv run ruff check . --fix
 
 sync-leagues:
 	curl -s -X POST $(SERVER_URL)/sync/leagues | python -m json.tool
