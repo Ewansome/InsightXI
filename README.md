@@ -112,3 +112,29 @@ make install      # Install dependencies for all services
 ```bash
 curl -X POST http://localhost:8002/sync/leagues
 ```
+
+-----
+### CI/CD Pipeline
+
+```mermaid
+flowchart LR
+    subgraph CI[CI - Pull Requests]
+        pr[Pull Request] --> lint[Lint]
+        lint --> test[Test]
+    end
+
+    subgraph CD[CD - Main Branch]
+        push[Push to Main] --> build[Build Images]
+        build --> ecr[Push to ECR]
+    end
+
+    pr -.->|merge| push
+```
+
+**CI (on every PR):**
+- Runs Ruff linter on all services
+- Runs pytest for all services
+
+**CD (on merge to main):**
+- Builds Docker images for all services
+- Pushes to Amazon ECR with commit SHA and `latest` tags
