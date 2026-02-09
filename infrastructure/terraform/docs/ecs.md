@@ -1,6 +1,6 @@
 # ecs.tf
 
-This file creates the ECS (Elastic Container Service) cluster, task definitions, and services. ECS runs your Docker containers on AWS.
+This file creates the ECS (Elastic Container Service) cluster, task definitions, and services. ECS runs the Docker containers on AWS.
 
 ## Architecture
 
@@ -40,7 +40,7 @@ resource "aws_ecs_cluster" "main" {
 **What:** Creates the ECS cluster - a logical grouping of services.
 
 **Why:**
-- A cluster is just a namespace for your services
+- A cluster is just a namespace for the services
 - `containerInsights = enabled`: Sends detailed metrics to CloudWatch
   - CPU/memory usage per container
   - Useful for debugging and scaling decisions
@@ -79,7 +79,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution" {
 **Why two roles?**
 
 1. **Execution Role** (`ecs_task_execution`):
-   - Used by ECS itself (not your code)
+   - Used by ECS itself (not the code)
    - Permissions to:
      - Pull images from ECR
      - Write logs to CloudWatch
@@ -87,7 +87,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution" {
    - The `AmazonECSTaskExecutionRolePolicy` is an AWS-managed policy with these permissions
 
 2. **Task Role** (`ecs_task`):
-   - Used by your application code
+   - Used by the application code
    - Would include permissions like:
      - Access S3 buckets
      - Call other AWS services

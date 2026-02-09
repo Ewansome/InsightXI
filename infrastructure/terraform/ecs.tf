@@ -58,7 +58,7 @@ resource "aws_cloudwatch_log_group" "services" {
   for_each = toset(["sportmonks-service", "database-service", "orchestrator-service"])
 
   name              = "/ecs/${var.project_name}-${var.environment}/${each.key}"
-  retention_in_days = 30
+  retention_in_days = 5
 
   tags = {
     Name = "${var.project_name}-${var.environment}-${each.key}-logs"

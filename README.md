@@ -9,7 +9,8 @@ Application for collating sports data for visualisation. Data sourced from [Spor
 |----------|------------|
 | **Backend** | Python, FastAPI, Pydantic |
 | **Database** | MySQL, SQLAlchemy |
-| **Infrastructure** | Docker, AWS ECR, GitHub Actions |
+| **Infrastructure** | Docker, Terraform, GitHub Actions |
+| **AWS** | ECS Fargate, RDS, API Gateway, ALB, ECR |
 | **Development** | uv, Ruff, pytest |
 
 -----
@@ -137,3 +138,53 @@ flowchart LR
 **CD (on merge to main):**
 - Builds Docker images for all services
 - Pushes to Amazon ECR with commit SHA and `latest` tags
+
+-----
+### AWS Architecture
+
+```mermaid
+flowchart TB
+    subgraph internet[Internet]
+        client[Client]
+    end
+
+    subgraph aws[AWS]
+        subgraph vpc[VPC]
+            subgraph public[Public Subnets]
+                nat[NAT Gateway]
+            end
+
+            subgraph private[Private Subnets]
+                subgraph ecs[ECS Fargate]
+                    orch[Orchestrator<br>Service]
+                    sm[SportMonks<br>Service]
+                    db_svc[Database<br>Service]
+                end
+                alb[Internal ALB]
+                rds[(RDS MySQL)]
+            end
+        end
+
+        apigw[API Gateway]
+        ecr[ECR]
+    end
+
+    client --> apigw
+    apigw -->|VPC Link| alb
+    alb --> orch
+    alb --> sm
+    alb --> db_svc
+    orch --> sm
+    orch --> db_svc
+    db_svc --> rds
+    sm -->|NAT| nat
+    nat --> sportmonks_api[(SportMonks API)]
+    ecr -.->|Pull Images| ecs
+```
+
+**Traffic Flow:**
+1. Client requests hit API Gateway (public endpoint)
+2. API Gateway routes through VPC Link to internal ALB
+3. ALB routes to ECS services based on path
+4. Services communicate internally via ALB
+5. Outbound API calls go through NAT Gateway

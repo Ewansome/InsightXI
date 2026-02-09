@@ -1,6 +1,6 @@
 # api_gateway.tf
 
-This file creates the API Gateway - the public entry point that sits in front of your internal ALB. API Gateway handles authentication, rate limiting, and routes requests to your private services.
+This file creates the API Gateway - the public entry point that sits in front of the internal ALB. API Gateway handles authentication, rate limiting, and routes requests to the private services.
 
 ## Architecture
 
@@ -65,7 +65,7 @@ resource "aws_apigatewayv2_api" "main" {
   - REST API: ~$3.50 per million requests
   - HTTP API lacks some REST API features (usage plans, API keys) but has JWT auth
 - **CORS configuration:**
-  - Required if your frontend (browser) is on a different domain
+  - Required if the frontend (browser) is on a different domain
   - `allow_origins = ["*"]`: Allow any domain (tighten for production)
   - `allow_headers`: Must include `Authorization` for JWT tokens
   - `max_age = 300`: Browser caches CORS preflight for 5 minutes
@@ -83,12 +83,12 @@ resource "aws_apigatewayv2_vpc_link" "main" {
 }
 ```
 
-**What:** Creates a private connection from API Gateway into your VPC.
+**What:** Creates a private connection from API Gateway into the VPC.
 
 **Why:**
-- API Gateway runs on AWS's public infrastructure, not in your VPC
-- VPC Link creates an elastic network interface (ENI) in your private subnets
-- This ENI allows API Gateway to reach your internal ALB
+- API Gateway runs on AWS's public infrastructure, not in the VPC
+- VPC Link creates an elastic network interface (ENI) in the private subnets
+- This ENI allows API Gateway to reach the internal ALB
 - Without VPC Link, API Gateway can only reach public endpoints
 - `security_group_ids`: Controls what the VPC Link can access (just port 80 to ALB)
 
@@ -184,7 +184,7 @@ resource "aws_apigatewayv2_authorizer" "jwt" {
   name             = "jwt-authorizer"
 
   jwt_configuration {
-    audience = ["your-client-id"]
+    audience = ["the-client-id"]
     issuer   = "https://cognito-idp.eu-west-2.amazonaws.com/eu-west-2_xxxxx"
   }
 }
@@ -201,7 +201,7 @@ resource "aws_apigatewayv2_route" "protected" {
 This would:
 1. Require a valid JWT in the `Authorization` header
 2. Validate it against Cognito (or another OIDC provider)
-3. Reject requests with invalid/expired tokens before they reach your app
+3. Reject requests with invalid/expired tokens before they reach the app
 
 ### API Keys (for machine-to-machine)
 

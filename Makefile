@@ -1,4 +1,4 @@
-.PHONY: help install install-sportmonks install-database install-orchestrator lint lint-fix test up down inspect-db
+.PHONY: help install install-sportmonks install-database install-orchestrator lint lint-fix test up down inspect-db terraform-plan terraform-apply terraform-destroy terraform-destroy-db terraform-destroy-plan
 
 help:
 	@echo "Usage: make [target]"
@@ -12,6 +12,13 @@ help:
 	@echo "  up               Build and start all services with docker-compose"
 	@echo "  down             Stop and remove all containers"
 	@echo "  inspect-db       Connect to MySQL CLI in the container"
+	@echo ""
+	@echo "Terraform:"
+	@echo "  terraform-plan         Preview infrastructure changes"
+	@echo "  terraform-apply        Apply infrastructure changes"
+	@echo "  terraform-destroy      Destroy all infrastructure"
+	@echo "  terraform-destroy-db   Destroy only the RDS instance"
+	@echo "  terraform-destroy-plan Preview what would be destroyed"
 	@echo ""
 	@echo "Individual service installs:"
 	@echo "  install-sportmonks    Install sportmonks-service dependencies"
@@ -52,3 +59,18 @@ down:
 
 inspect-db:
 	podman exec -it insightxi-mysql mysql -u root -p insightxi_db
+
+terraform-plan:
+	cd infrastructure/terraform && terraform plan
+
+terraform-apply:
+	cd infrastructure/terraform && terraform apply
+
+terraform-destroy:
+	cd infrastructure/terraform && terraform destroy
+
+terraform-destroy-db:
+	cd infrastructure/terraform && terraform destroy -target=aws_db_instance.main
+
+terraform-destroy-plan:
+	cd infrastructure/terraform && terraform plan -destroy
