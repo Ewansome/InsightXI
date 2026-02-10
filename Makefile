@@ -1,4 +1,7 @@
-.PHONY: help install install-sportmonks install-database install-orchestrator lint lint-fix test up down inspect-db terraform-plan terraform-apply terraform-destroy terraform-destroy-db terraform-destroy-plan
+.PHONY: help install install-sportmonks install-database install-orchestrator lint lint-fix test up down inspect-db terraform-plan terraform-apply terraform-destroy terraform-destroy-db terraform-destroy-plan sync-leagues
+
+SERVER_URL := http://127.0.0.1:8002
+
 
 help:
 	@echo "Usage: make [target]"
@@ -59,6 +62,12 @@ down:
 
 inspect-db:
 	podman exec -it insightxi-mysql mysql -u root -p insightxi_db
+
+sync-leagues:
+	curl -s -X POST $(SERVER_URL)/sync/leagues | python -m json.tool
+
+sync-teams:
+	curl -s -X POST $(SERVER_URL)/sync/teams | python -m json.tool
 
 terraform-plan:
 	cd infrastructure/terraform && terraform plan

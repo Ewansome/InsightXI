@@ -57,3 +57,21 @@ def mock_league_data():
         "category": 2,
         "has_jerseys": False,
     }
+
+
+@pytest.fixture
+def mock_team_data():
+    return {
+        "id": 1,
+        "sport_id": 1,
+        "country_id": 462,
+        "venue_id": 214,
+        "gender": "male",
+        "name": "West Ham United",
+        "short_code": "WHU",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/teams/1/1.png",
+        "founded": 1895,
+        "type": "domestic",
+        "placeholder": False,
+        "last_played_at": "2025-12-08 18:00:00",
+    }

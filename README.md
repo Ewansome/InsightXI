@@ -32,7 +32,7 @@ flowchart TB
     end
 
     subgraph database[Database Service]
-        db_endpoints["POST /leagues<br>POST /leagues/bulk<br>GET /leagues/{id}"]
+        db_endpoints["POST /leagues/bulk<br>POST /teams/bulk<br>GET /leagues<br>GET /teams"]
     end
 
     sportmonks --> api[(SportMonks API)]

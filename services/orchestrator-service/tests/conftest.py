@@ -46,3 +46,37 @@ def mock_leagues():
 @pytest.fixture
 def mock_bulk_result():
     return {"created": 2, "updated": 0}
+
+
+@pytest.fixture
+def mock_teams():
+    return [
+        {
+            "id": 1,
+            "sport_id": 1,
+            "country_id": 462,
+            "venue_id": 214,
+            "gender": "male",
+            "name": "West Ham United",
+            "short_code": "WHU",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/teams/1/1.png",
+            "founded": 1895,
+            "type": "domestic",
+            "placeholder": False,
+            "last_played_at": "2025-12-08 18:00:00",
+        },
+        {
+            "id": 2,
+            "sport_id": 1,
+            "country_id": 462,
+            "venue_id": 215,
+            "gender": "male",
+            "name": "Manchester United",
+            "short_code": "MUN",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/teams/2/2.png",
+            "founded": 1878,
+            "type": "domestic",
+            "placeholder": False,
+            "last_played_at": "2025-12-08 18:00:00",
+        },
+    ]
