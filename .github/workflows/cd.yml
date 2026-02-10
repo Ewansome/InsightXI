@@ -7,7 +7,6 @@ on:
 env:
   AWS_REGION: eu-west-2
   ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com
-  ECS_CLUSTER: insightxi-dev-cluster
 
 jobs:
   build-and-push:
@@ -41,36 +40,3 @@ jobs:
           docker build -t ${{ env.ECR_REGISTRY }}/${{ matrix.service }}:latest .
           docker push ${{ env.ECR_REGISTRY }}/${{ matrix.service }}:$IMAGE_TAG
           docker push ${{ env.ECR_REGISTRY }}/${{ matrix.service }}:latest
-
-  deploy:
-    name: Deploy to ECS
-    runs-on: ubuntu-latest
-    needs: build-and-push
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Deploy services to ECS
-        run: |
-          for service in sportmonks database orchestrator; do
-            echo "Deploying insightxi-dev-${service}..."
-            aws ecs update-service \
-              --cluster ${{ env.ECS_CLUSTER }} \
-              --service insightxi-dev-${service} \
-              --force-new-deployment \
-              --no-cli-pager
-          done
-
-      - name: Wait for deployments to stabilize
-        run: |
-          echo "Waiting for services to stabilize..."
-          for service in sportmonks database orchestrator; do
-            aws ecs wait services-stable \
-              --cluster ${{ env.ECS_CLUSTER }} \
-              --services insightxi-dev-${service}
-            echo "✓ insightxi-dev-${service} is stable"
-          done
