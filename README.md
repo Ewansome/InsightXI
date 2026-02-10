@@ -126,6 +126,7 @@ flowchart LR
     subgraph CD[CD - Main Branch]
         push[Push to Main] --> build[Build Images]
         build --> ecr[Push to ECR]
+        ecr --> deploy[Deploy to ECS]
     end
 
     pr -.->|merge| push
@@ -138,6 +139,8 @@ flowchart LR
 **CD (on merge to main):**
 - Builds Docker images for all services
 - Pushes to Amazon ECR with commit SHA and `latest` tags
+- Deploys to ECS Fargate (force new deployment)
+- Waits for services to stabilize
 
 -----
 ### AWS Architecture

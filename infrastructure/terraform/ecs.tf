@@ -172,8 +172,8 @@ resource "aws_ecs_task_definition" "orchestrator" {
         }
       ]
       environment = [
-        { name = "SPORTMONKS_SERVICE_URL", value = "http://localhost:8000" },
-        { name = "DATABASE_SERVICE_URL", value = "http://localhost:8001" }
+        { name = "SPORTMONKS_SERVICE_URL", value = "http://${aws_lb.main.dns_name}" },
+        { name = "DATABASE_SERVICE_URL", value = "http://${aws_lb.main.dns_name}/db" }
       ]
       logConfiguration = {
         logDriver = "awslogs"
