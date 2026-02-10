@@ -25,5 +25,23 @@ class DatabaseServiceClient:
             response.raise_for_status()
             return response.json()
 
+    async def bulk_upsert_teams(self, teams: list[dict]) -> dict:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(f"{self.base_url}/teams/bulk", json=teams)
+            response.raise_for_status()
+            return response.json()
+
+    async def get_teams(self) -> list[dict]:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"{self.base_url}/teams")
+            response.raise_for_status()
+            return response.json()
+
+    async def get_team(self, team_id: int) -> dict:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"{self.base_url}/teams/{team_id}")
+            response.raise_for_status()
+            return response.json()
+
 
 database_service_client = DatabaseServiceClient()

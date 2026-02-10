@@ -1,6 +1,5 @@
 .PHONY: run build run-container stop-container test lint lint-fix sync-leagues
 
-SERVER_URL := http://127.0.0.1:8002
 IMAGE_NAME := orchestrator-service
 CONTAINER_NAME := orchestrator-service
 ENV_FILE := ../../.env
