@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, patch
 class TestGetFixtures:
     def test_returns_list_of_fixtures(self, client, mock_fixtures_response, mock_fixture_data):
         with patch("app.services.fixture_service.sportmonks_client") as mock_client:
-            mock_client.get = AsyncMock(return_value=mock_fixtures_response)
+            mock_client.get_all_pages = AsyncMock(return_value=mock_fixtures_response)
 
             response = client.get("/fixtures")
 
@@ -16,11 +16,11 @@ class TestGetFixtures:
 
     def test_calls_sportmonks_client_with_correct_endpoint(self, client, mock_fixtures_response):
         with patch("app.services.fixture_service.sportmonks_client") as mock_client:
-            mock_client.get = AsyncMock(return_value=mock_fixtures_response)
+            mock_client.get_all_pages = AsyncMock(return_value=mock_fixtures_response)
 
             client.get("/fixtures")
 
-            mock_client.get.assert_called_once_with("football/fixtures")
+            mock_client.get_all_pages.assert_called_once_with("football/fixtures")
 
 
 class TestGetFixtureById:

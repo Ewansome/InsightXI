@@ -15,7 +15,7 @@ class TestFixtureService:
         self, service, mock_fixtures_response, mock_fixture_data
     ):
         with patch("app.services.fixture_service.sportmonks_client") as mock_client:
-            mock_client.get = AsyncMock(return_value=mock_fixtures_response)
+            mock_client.get_all_pages = AsyncMock(return_value=mock_fixtures_response)
 
             result = await service.get_all_fixtures()
 

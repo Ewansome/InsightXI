@@ -21,5 +21,26 @@ class SportMonksClient:
             response.raise_for_status()
             return response.json()
 
+    async def get_all_pages(
+        self, endpoint: str, params: dict | None = None
+    ) -> list[dict]:
+        all_data = []
+        page = 1
+
+        while True:
+            page_params = {"per_page": 50, "page": page}
+            if params:
+                page_params.update(params)
+
+            response = await self.get(endpoint, params=page_params)
+            all_data.extend(response["data"])
+
+            if not response.get("pagination", {}).get("has_more", False):
+                break
+
+            page += 1
+
+        return all_data
+
 
 sportmonks_client = SportMonksClient()

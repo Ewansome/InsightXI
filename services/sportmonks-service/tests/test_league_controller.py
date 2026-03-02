@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, patch
 class TestGetLeagues:
     def test_returns_list_of_leagues(self, client, mock_leagues_response, mock_league_data):
         with patch("app.services.league_service.sportmonks_client") as mock_client:
-            mock_client.get = AsyncMock(return_value=mock_leagues_response)
+            mock_client.get_all_pages = AsyncMock(return_value=mock_leagues_response)
 
             response = client.get("/leagues")
 
@@ -16,11 +16,11 @@ class TestGetLeagues:
 
     def test_calls_sportmonks_client_with_correct_endpoint(self, client, mock_leagues_response):
         with patch("app.services.league_service.sportmonks_client") as mock_client:
-            mock_client.get = AsyncMock(return_value=mock_leagues_response)
+            mock_client.get_all_pages = AsyncMock(return_value=mock_leagues_response)
 
             client.get("/leagues")
 
-            mock_client.get.assert_called_once_with("football/leagues")
+            mock_client.get_all_pages.assert_called_once_with("football/leagues")
 
 
 class TestGetLeagueById:

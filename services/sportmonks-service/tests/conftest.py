@@ -29,7 +29,7 @@ def mock_league_data():
 
 @pytest.fixture
 def mock_leagues_response(mock_league_data):
-    return {"data": [mock_league_data]}
+    return [mock_league_data]
 
 
 @pytest.fixture
@@ -57,7 +57,7 @@ def mock_team_data():
 
 @pytest.fixture
 def mock_teams_response(mock_team_data):
-    return {"data": [mock_team_data]}
+    return [mock_team_data]
 
 
 @pytest.fixture
@@ -92,7 +92,7 @@ def mock_fixture_data():
 
 @pytest.fixture
 def mock_fixtures_response(mock_fixture_data):
-    return {"data": [mock_fixture_data]}
+    return [mock_fixture_data]
 
 
 @pytest.fixture

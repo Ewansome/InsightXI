@@ -1,5 +1,5 @@
 from app.clients.sportmonks_client import sportmonks_client
-from app.models.team import Team, TeamResponse
+from app.models.team import Team
 
 
 class TeamService:
@@ -7,9 +7,8 @@ class TeamService:
         self.url_suffix = "football/teams"
 
     async def get_all_teams(self) -> list[Team]:
-        response = await sportmonks_client.get(self.url_suffix)
-        validated = TeamResponse(**response)
-        return validated.data
+        data = await sportmonks_client.get_all_pages(self.url_suffix)
+        return [Team(**item) for item in data]
 
     async def get_team_by_id(self, team_id: int) -> Team:
         response = await sportmonks_client.get(f"{self.url_suffix}/{team_id}")
