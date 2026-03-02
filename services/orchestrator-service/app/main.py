@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 
 from app.controllers import sync_controller
+from app.logging import configure_logging
+
+configure_logging()
 
 app = FastAPI(
     title="Orchestrator Service",

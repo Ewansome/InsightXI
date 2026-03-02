@@ -1,4 +1,4 @@
-.PHONY: help install install-sportmonks install-database install-orchestrator lint lint-fix test up down inspect-db terraform-plan terraform-apply terraform-destroy terraform-destroy-db terraform-destroy-plan sync-leagues
+.PHONY: help install install-sportmonks install-database install-orchestrator lint lint-fix test up down inspect-db terraform-plan terraform-apply terraform-destroy terraform-destroy-db terraform-destroy-plan sync-leagues logs logs-sportmonks logs-database logs-orchestrator print-logs print-logs-sportmonks print-logs-database print-logs-orchestrator
 
 SERVER_URL := http://127.0.0.1:8002
 ROOT := $(shell pwd)
@@ -16,6 +16,14 @@ help:
 	@echo "  up               Build and start all services with docker-compose"
 	@echo "  down             Stop and remove all containers"
 	@echo "  inspect-db       Connect to MySQL CLI in the container"
+	@echo "  logs             Tail logs for all services (follow)"
+	@echo "  logs-sportmonks  Tail logs for sportmonks-service (follow)"
+	@echo "  logs-database    Tail logs for database-service (follow)"
+	@echo "  logs-orchestrator Tail logs for orchestrator-service (follow)"
+	@echo "  print-logs             Print recent logs for all services"
+	@echo "  print-logs-sportmonks  Print recent logs for sportmonks-service"
+	@echo "  print-logs-database    Print recent logs for database-service"
+	@echo "  print-logs-orchestrator Print recent logs for orchestrator-service"
 	@echo ""
 	@echo "Terraform:"
 	@echo "  terraform-plan         Preview infrastructure changes"
@@ -65,17 +73,52 @@ restart:
 	make down
 	make up
 
+logs:
+	podman logs -f sportmonks-service &
+	podman logs -f database-service &
+	podman logs -f orchestrator-service &
+	@wait
+
+logs-sportmonks:
+	podman logs -f sportmonks-service
+
+logs-database:
+	podman logs -f database-service
+
+logs-orchestrator:
+	podman logs -f orchestrator-service
+
+print-logs:
+	@podman logs --tail 50 sportmonks-service
+	@podman logs --tail 50 database-service
+	@podman logs --tail 50 orchestrator-service
+
+print-logs-sportmonks:
+	podman logs --tail 50 sportmonks-service
+
+print-logs-database:
+	podman logs --tail 50 database-service
+
+print-logs-orchestrator:
+	podman logs --tail 50 orchestrator-service
+
 inspect-db:
 	podman exec -it insightxi-mysql mysql -u root -p insightxi_db
 
 sync-leagues:
-	curl -s -X POST $(SERVER_URL)/sync/leagues | python3 -m json.tool
+	@start=$$(date -u +%Y-%m-%dT%H:%M:%SZ) && \
+	curl -s -X POST $(SERVER_URL)/sync/leagues | python3 -m json.tool && \
+	podman logs --since "$$start" orchestrator-service
 
 sync-teams:
-	curl -s -X POST $(SERVER_URL)/sync/teams | python3 -m json.tool
+	@start=$$(date -u +%Y-%m-%dT%H:%M:%SZ) && \
+	curl -s -X POST $(SERVER_URL)/sync/teams | python3 -m json.tool && \
+	podman logs --since "$$start" orchestrator-service
 
 sync-fixtures:
-	curl -s -X POST $(SERVER_URL)/sync/fixtures | python3 -m json.tool
+	@start=$$(date -u +%Y-%m-%dT%H:%M:%SZ) && \
+	curl -s -X POST $(SERVER_URL)/sync/fixtures | python3 -m json.tool && \
+	podman logs --since "$$start" orchestrator-service
 
 sync:
 	make sync-leagues && make sync-teams && make sync-fixtures

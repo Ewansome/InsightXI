@@ -1,7 +1,12 @@
+import time
+
+import structlog
 from sqlalchemy.orm import Session
 
 from app.models.team import TeamDB
 from app.schemas.team import TeamCreate
+
+logger = structlog.get_logger()
 
 
 class TeamRepository:
@@ -22,6 +27,9 @@ class TeamRepository:
         return db_team
 
     def bulk_upsert(self, teams: list[TeamCreate]) -> tuple[int, int]:
+        logger.info("bulk_upsert_started", entity="teams", records=len(teams))
+        start = time.perf_counter()
+
         created = 0
         updated = 0
 
@@ -36,6 +44,9 @@ class TeamRepository:
                 created += 1
 
         self.db.commit()
+
+        duration_ms = int((time.perf_counter() - start) * 1000)
+        logger.info("bulk_upsert_completed", entity="teams", created=created, updated=updated, duration_ms=duration_ms)
         return created, updated
 
     def delete(self, team_id: int) -> bool:
