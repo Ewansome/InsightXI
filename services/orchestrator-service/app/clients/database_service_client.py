@@ -43,5 +43,23 @@ class DatabaseServiceClient:
             response.raise_for_status()
             return response.json()
 
+    async def bulk_upsert_fixtures(self, fixtures: list[dict]) -> dict:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(f"{self.base_url}/fixtures/bulk", json=fixtures)
+            response.raise_for_status()
+            return response.json()
+
+    async def get_fixtures(self) -> list[dict]:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"{self.base_url}/fixtures")
+            response.raise_for_status()
+            return response.json()
+
+    async def get_fixture(self, fixture_id: int) -> dict:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"{self.base_url}/fixtures/{fixture_id}")
+            response.raise_for_status()
+            return response.json()
+
 
 database_service_client = DatabaseServiceClient()
