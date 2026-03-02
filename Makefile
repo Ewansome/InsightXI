@@ -1,6 +1,7 @@
 .PHONY: help install install-sportmonks install-database install-orchestrator lint lint-fix test up down inspect-db terraform-plan terraform-apply terraform-destroy terraform-destroy-db terraform-destroy-plan sync-leagues
 
 SERVER_URL := http://127.0.0.1:8002
+ROOT := $(shell pwd)
 
 
 help:
@@ -55,19 +56,35 @@ test:
 	cd services/orchestrator-service && make test
 
 up:
-	podman-compose up --build -d
+	podman-compose up --build -d && sleep 10 && make health
 
 down:
 	podman-compose down
+
+restart:
+	make down
+	make up
 
 inspect-db:
 	podman exec -it insightxi-mysql mysql -u root -p insightxi_db
 
 sync-leagues:
-	curl -s -X POST $(SERVER_URL)/sync/leagues | python -m json.tool
+	curl -s -X POST $(SERVER_URL)/sync/leagues | python3 -m json.tool
 
 sync-teams:
-	curl -s -X POST $(SERVER_URL)/sync/teams | python -m json.tool
+	curl -s -X POST $(SERVER_URL)/sync/teams | python3 -m json.tool
+
+sync-fixtures:
+	curl -s -X POST $(SERVER_URL)/sync/fixtures | python3 -m json.tool
+
+sync:
+	make sync-leagues && make sync-teams && make sync-fixtures
+
+health:                                                                                                                                                                                                                                  
+	@echo "sportmonks-service: $$(curl -s http://localhost:8000/health | python3 -c "import sys,json; print(json.load(sys.stdin)['status'])" 2>/dev/null || echo "unreachable")"                                                      
+	@echo "database-service:   $$(curl -s http://localhost:8001/health | python3 -c "import sys,json; print(json.load(sys.stdin)['status'])" 2>/dev/null || echo "unreachable")"                                                      
+	@echo "orchestrator:       $$(curl -s http://localhost:8002/health | python3 -c "import sys,json; print(json.load(sys.stdin)['status'])" 2>/dev/null || echo "unreachable")"                                                      
+	@echo "mysql:              $$(podman exec insightxi-mysql mysqladmin ping -h localhost --silent 2>/dev/null && echo "healthy" || echo "unreachable")"                                                                             
 
 terraform-plan:
 	cd infrastructure/terraform && terraform plan
