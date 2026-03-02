@@ -42,3 +42,46 @@ class TestSyncLeagues:
             client.post("/sync/leagues")
 
             mock_database.bulk_upsert_leagues.assert_called_once_with(mock_leagues)
+
+
+class TestSyncFixtures:
+    def test_sync_fixtures_returns_result(self, client, mock_fixtures, mock_bulk_result):
+        with (
+            patch("app.services.fixture_sync_service.sportmonks_service_client") as mock_sportmonks,
+            patch("app.services.fixture_sync_service.database_service_client") as mock_database,
+        ):
+            mock_sportmonks.get_fixtures = AsyncMock(return_value=mock_fixtures)
+            mock_database.bulk_upsert_fixtures = AsyncMock(return_value=mock_bulk_result)
+
+            response = client.post("/sync/fixtures")
+
+            assert response.status_code == 200
+            data = response.json()
+            assert data["entity"] == "fixtures"
+            assert data["created"] == 2
+            assert data["updated"] == 0
+            assert data["status"] == "completed"
+
+    def test_sync_fixtures_calls_sportmonks_service(self, client, mock_fixtures, mock_bulk_result):
+        with (
+            patch("app.services.fixture_sync_service.sportmonks_service_client") as mock_sportmonks,
+            patch("app.services.fixture_sync_service.database_service_client") as mock_database,
+        ):
+            mock_sportmonks.get_fixtures = AsyncMock(return_value=mock_fixtures)
+            mock_database.bulk_upsert_fixtures = AsyncMock(return_value=mock_bulk_result)
+
+            client.post("/sync/fixtures")
+
+            mock_sportmonks.get_fixtures.assert_called_once()
+
+    def test_sync_fixtures_sends_data_to_database_service(self, client, mock_fixtures, mock_bulk_result):
+        with (
+            patch("app.services.fixture_sync_service.sportmonks_service_client") as mock_sportmonks,
+            patch("app.services.fixture_sync_service.database_service_client") as mock_database,
+        ):
+            mock_sportmonks.get_fixtures = AsyncMock(return_value=mock_fixtures)
+            mock_database.bulk_upsert_fixtures = AsyncMock(return_value=mock_bulk_result)
+
+            client.post("/sync/fixtures")
+
+            mock_database.bulk_upsert_fixtures.assert_called_once_with(mock_fixtures)

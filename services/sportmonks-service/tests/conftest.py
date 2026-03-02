@@ -63,3 +63,38 @@ def mock_teams_response(mock_team_data):
 @pytest.fixture
 def mock_team_response(mock_team_data):
     return {"data": mock_team_data}
+
+
+@pytest.fixture
+def mock_fixture_data():
+    return {
+        "id": 19134030,
+        "sport_id": 1,
+        "league_id": 271,
+        "season_id": 23584,
+        "stage_id": 77471898,
+        "group_id": None,
+        "aggregate_id": None,
+        "round_id": 339304,
+        "state_id": 5,
+        "venue_id": 8909,
+        "name": "Superliga",
+        "starting_at": "2025-12-08 18:00:00",
+        "result_info": "Game ended in draw",
+        "leg": "1/1",
+        "details": None,
+        "length": 90,
+        "placeholder": False,
+        "has_odds": True,
+        "starting_at_timestamp": 1733677200,
+    }
+
+
+@pytest.fixture
+def mock_fixtures_response(mock_fixture_data):
+    return {"data": [mock_fixture_data]}
+
+
+@pytest.fixture
+def mock_fixture_response(mock_fixture_data):
+    return {"data": mock_fixture_data}

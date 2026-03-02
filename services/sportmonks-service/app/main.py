@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.controllers import league_controller, team_controller
+from app.controllers import fixture_controller, league_controller, team_controller
 
 app = FastAPI(
     title="SportMonks Service",
@@ -8,6 +8,7 @@ app = FastAPI(
     version="0.1.0",
 )
 
+app.include_router(fixture_controller.router)
 app.include_router(league_controller.router)
 app.include_router(team_controller.router)
 
