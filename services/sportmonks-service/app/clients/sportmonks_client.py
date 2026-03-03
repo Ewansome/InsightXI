@@ -1,6 +1,11 @@
+import time
+
 import httpx
+import structlog
 
 from app.config import settings
+
+logger = structlog.get_logger()
 
 
 class SportMonksClient:
@@ -26,19 +31,36 @@ class SportMonksClient:
     ) -> list[dict]:
         all_data = []
         page = 1
+        start = time.perf_counter()
+
+        logger.info("pagination_started", endpoint=endpoint)
 
         while True:
+            page_start = time.perf_counter()
             page_params = {"per_page": 50, "page": page}
             if params:
                 page_params.update(params)
 
             response = await self.get(endpoint, params=page_params)
-            all_data.extend(response["data"])
+            items = response["data"]
+            all_data.extend(items)
+
+            page_duration_ms = int((time.perf_counter() - page_start) * 1000)
+            logger.info("page_fetched", endpoint=endpoint, page=page, items=len(items), duration_ms=page_duration_ms)
 
             if not response.get("pagination", {}).get("has_more", False):
                 break
 
             page += 1
+
+        total_duration_ms = int((time.perf_counter() - start) * 1000)
+        logger.info(
+            "pagination_completed",
+            endpoint=endpoint,
+            total_pages=page,
+            total_items=len(all_data),
+            duration_ms=total_duration_ms,
+        )
 
         return all_data
 

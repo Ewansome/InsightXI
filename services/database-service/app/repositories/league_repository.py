@@ -1,7 +1,12 @@
+import time
+
+import structlog
 from sqlalchemy.orm import Session
 
 from app.models.league import LeagueDB
 from app.schemas.league import LeagueCreate
+
+logger = structlog.get_logger()
 
 
 class LeagueRepository:
@@ -22,6 +27,9 @@ class LeagueRepository:
         return db_league
 
     def bulk_upsert(self, leagues: list[LeagueCreate]) -> tuple[int, int]:
+        logger.info("bulk_upsert_started", entity="leagues", records=len(leagues))
+        start = time.perf_counter()
+
         created = 0
         updated = 0
 
@@ -36,6 +44,11 @@ class LeagueRepository:
                 created += 1
 
         self.db.commit()
+
+        duration_ms = int((time.perf_counter() - start) * 1000)
+        logger.info(
+            "bulk_upsert_completed", entity="leagues", created=created, updated=updated, duration_ms=duration_ms
+        )
         return created, updated
 
     def delete(self, league_id: int) -> bool:

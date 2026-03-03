@@ -1,7 +1,12 @@
+import time
+
+import structlog
 from sqlalchemy.orm import Session
 
 from app.models.fixture import FixtureDB
 from app.schemas.fixture import FixtureCreate
+
+logger = structlog.get_logger()
 
 
 class FixtureRepository:
@@ -22,6 +27,9 @@ class FixtureRepository:
         return db_fixture
 
     def bulk_upsert(self, fixtures: list[FixtureCreate]) -> tuple[int, int]:
+        logger.info("bulk_upsert_started", entity="fixtures", records=len(fixtures))
+        start = time.perf_counter()
+
         created = 0
         updated = 0
 
@@ -36,6 +44,11 @@ class FixtureRepository:
                 created += 1
 
         self.db.commit()
+
+        duration_ms = int((time.perf_counter() - start) * 1000)
+        logger.info(
+            "bulk_upsert_completed", entity="fixtures", created=created, updated=updated, duration_ms=duration_ms
+        )
         return created, updated
 
     def delete(self, fixture_id: int) -> bool:
