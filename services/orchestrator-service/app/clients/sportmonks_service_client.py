@@ -70,5 +70,25 @@ class SportMonksServiceClient:
             response.raise_for_status()
             return response.json()
 
+    async def get_seasons(self) -> list[dict]:
+        logger.info("sportmonks_request_started", entity="seasons")
+        start = time.perf_counter()
+
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            response = await client.get(f"{self.base_url}/seasons")
+            response.raise_for_status()
+            data = response.json()
+
+        duration_ms = int((time.perf_counter() - start) * 1000)
+        logger.info("sportmonks_request_completed", entity="seasons", records=len(data), duration_ms=duration_ms)
+        return data
+
+    async def get_season(self, season_id: int) -> dict:
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            response = await client.get(f"{self.base_url}/seasons/{season_id}")
+            response.raise_for_status()
+            return response.json()
+
+
 
 sportmonks_service_client = SportMonksServiceClient()

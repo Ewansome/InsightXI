@@ -66,6 +66,34 @@ def mock_team_response(mock_team_data):
 
 
 @pytest.fixture
+def mock_season_data():
+    return {
+        "id": 23584,
+        "sport_id": 1,
+        "league_id": 271,
+        "tie_breaker_rule_id": 1525,
+        "name": "2024/2025",
+        "finished": False,
+        "pending": False,
+        "is_current": True,
+        "starting_at": "2024-07-19",
+        "ending_at": "2025-06-01",
+        "standing_method": "conventional",
+        "games_in_current_week": True,
+    }
+
+
+@pytest.fixture
+def mock_seasons_response(mock_season_data):
+    return [mock_season_data]
+
+
+@pytest.fixture
+def mock_season_response(mock_season_data):
+    return {"data": mock_season_data}
+
+
+@pytest.fixture
 def mock_fixture_data():
     return {
         "id": 19134030,
