@@ -88,5 +88,30 @@ class DatabaseServiceClient:
             response.raise_for_status()
             return response.json()
 
+    async def bulk_upsert_seasons(self, seasons: list[dict]) -> dict:
+        logger.info("database_request_started", entity="seasons", operation="bulk_upsert", records=len(seasons))
+        start = time.perf_counter()
+
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            response = await client.post(f"{self.base_url}/seasons/bulk", json=seasons)
+            response.raise_for_status()
+            data = response.json()
+
+        duration_ms = int((time.perf_counter() - start) * 1000)
+        logger.info("database_request_completed", entity="seasons", operation="bulk_upsert", duration_ms=duration_ms)
+        return data
+
+    async def get_seasons(self) -> list[dict]:
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            response = await client.get(f"{self.base_url}/seasons")
+            response.raise_for_status()
+            return response.json()
+
+    async def get_season(self, season_id: int) -> dict:
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            response = await client.get(f"{self.base_url}/seasons/{season_id}")
+            response.raise_for_status()
+            return response.json()
+
 
 database_service_client = DatabaseServiceClient()

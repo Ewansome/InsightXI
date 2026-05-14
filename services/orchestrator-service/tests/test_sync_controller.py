@@ -44,6 +44,49 @@ class TestSyncLeagues:
             mock_database.bulk_upsert_leagues.assert_called_once_with(mock_leagues)
 
 
+class TestSyncSeasons:
+    def test_sync_seasons_returns_result(self, client, mock_seasons, mock_bulk_result):
+        with (
+            patch("app.services.season_sync_service.sportmonks_service_client") as mock_sportmonks,
+            patch("app.services.season_sync_service.database_service_client") as mock_database,
+        ):
+            mock_sportmonks.get_seasons = AsyncMock(return_value=mock_seasons)
+            mock_database.bulk_upsert_seasons = AsyncMock(return_value=mock_bulk_result)
+
+            response = client.post("/sync/seasons")
+
+            assert response.status_code == 200
+            data = response.json()
+            assert data["entity"] == "seasons"
+            assert data["created"] == 2
+            assert data["updated"] == 0
+            assert data["status"] == "completed"
+
+    def test_sync_seasons_calls_sportmonks_service(self, client, mock_seasons, mock_bulk_result):
+        with (
+            patch("app.services.season_sync_service.sportmonks_service_client") as mock_sportmonks,
+            patch("app.services.season_sync_service.database_service_client") as mock_database,
+        ):
+            mock_sportmonks.get_seasons = AsyncMock(return_value=mock_seasons)
+            mock_database.bulk_upsert_seasons = AsyncMock(return_value=mock_bulk_result)
+
+            client.post("/sync/seasons")
+
+            mock_sportmonks.get_seasons.assert_called_once()
+
+    def test_sync_seasons_sends_data_to_database_service(self, client, mock_seasons, mock_bulk_result):
+        with (
+            patch("app.services.season_sync_service.sportmonks_service_client") as mock_sportmonks,
+            patch("app.services.season_sync_service.database_service_client") as mock_database,
+        ):
+            mock_sportmonks.get_seasons = AsyncMock(return_value=mock_seasons)
+            mock_database.bulk_upsert_seasons = AsyncMock(return_value=mock_bulk_result)
+
+            client.post("/sync/seasons")
+
+            mock_database.bulk_upsert_seasons.assert_called_once_with(mock_seasons)
+
+
 class TestSyncFixtures:
     def test_sync_fixtures_returns_result(self, client, mock_fixtures, mock_bulk_result):
         with (

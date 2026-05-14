@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.controllers import fixture_controller, league_controller, team_controller
+from app.controllers import fixture_controller, league_controller, season_controller, team_controller
 from app.logging import configure_logging
 
 configure_logging()
@@ -11,7 +11,7 @@ configure_logging()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     from app.database import Base, engine
-    from app.models import fixture, league, team  # noqa: F401 - Import models to register with Base
+    from app.models import fixture, league, season, team  # noqa: F401 - Import models to register with Base
 
     Base.metadata.create_all(bind=engine)
     yield
@@ -26,6 +26,7 @@ app = FastAPI(
 
 app.include_router(fixture_controller.router)
 app.include_router(league_controller.router)
+app.include_router(season_controller.router)
 app.include_router(team_controller.router)
 
 
