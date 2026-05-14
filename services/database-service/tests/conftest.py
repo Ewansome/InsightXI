@@ -96,6 +96,27 @@ def mock_season_data():
 
 
 @pytest.fixture
+def mock_referee_data():
+    return {
+        "id": 15411,
+        "sport_id": 1,
+        "country_id": 462,
+        "nationality_id": 462,
+        "city_id": 51944,
+        "common_name": "M. Oliver",
+        "firstname": "Michael",
+        "lastname": "Oliver",
+        "name": "Michael Oliver",
+        "display_name": "Michael Oliver",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+        "height": 182,
+        "weight": 75,
+        "date_of_birth": "1985-02-20",
+        "gender": "male",
+    }
+
+
+@pytest.fixture
 def mock_fixture_data():
     return {
         "id": 19134030,

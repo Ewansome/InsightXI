@@ -1,6 +1,12 @@
 from fastapi import FastAPI
 
-from app.controllers import fixture_controller, league_controller, season_controller, team_controller
+from app.controllers import (
+    fixture_controller,
+    league_controller,
+    referee_controller,
+    season_controller,
+    team_controller,
+)
 from app.logging import configure_logging
 
 configure_logging()
@@ -13,6 +19,7 @@ app = FastAPI(
 
 app.include_router(fixture_controller.router)
 app.include_router(league_controller.router)
+app.include_router(referee_controller.router)
 app.include_router(season_controller.router)
 app.include_router(team_controller.router)
 

@@ -117,6 +117,46 @@ def mock_seasons():
 
 
 @pytest.fixture
+def mock_referees():
+    return [
+        {
+            "id": 15411,
+            "sport_id": 1,
+            "country_id": 462,
+            "nationality_id": 462,
+            "city_id": 51944,
+            "common_name": "M. Oliver",
+            "firstname": "Michael",
+            "lastname": "Oliver",
+            "name": "Michael Oliver",
+            "display_name": "Michael Oliver",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 182,
+            "weight": 75,
+            "date_of_birth": "1985-02-20",
+            "gender": "male",
+        },
+        {
+            "id": 15412,
+            "sport_id": 1,
+            "country_id": 462,
+            "nationality_id": 462,
+            "city_id": 51945,
+            "common_name": "A. Taylor",
+            "firstname": "Anthony",
+            "lastname": "Taylor",
+            "name": "Anthony Taylor",
+            "display_name": "Anthony Taylor",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 178,
+            "weight": 72,
+            "date_of_birth": "1978-10-20",
+            "gender": "male",
+        },
+    ]
+
+
+@pytest.fixture
 def mock_fixtures():
     return [
         {
