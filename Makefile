@@ -1,4 +1,4 @@
-.PHONY: help install install-sportmonks install-database install-orchestrator lint lint-fix test up down inspect-db terraform-plan terraform-apply terraform-destroy terraform-destroy-db terraform-destroy-plan sync-leagues sync-seasons sync-teams sync-fixtures sync logs logs-sportmonks logs-database logs-orchestrator print-logs print-logs-sportmonks print-logs-database print-logs-orchestrator
+.PHONY: help install install-sportmonks install-database install-orchestrator lint lint-fix test up down inspect-db terraform-plan terraform-apply terraform-destroy terraform-destroy-db terraform-destroy-plan sync-leagues sync-referees sync-seasons sync-teams sync-fixtures sync logs logs-sportmonks logs-database logs-orchestrator print-logs print-logs-sportmonks print-logs-database print-logs-orchestrator
 
 SERVER_URL := http://127.0.0.1:8002
 ROOT := $(shell pwd)
@@ -115,6 +115,11 @@ sync-teams:
 	curl -s -X POST $(SERVER_URL)/sync/teams | python3 -m json.tool && \
 	podman logs --since "$$start" orchestrator-service
 
+sync-referees:
+	@start=$$(date -u +%Y-%m-%dT%H:%M:%SZ) && \
+	curl -s -X POST $(SERVER_URL)/sync/referees | python3 -m json.tool && \
+	podman logs --since "$$start" orchestrator-service
+
 sync-seasons:
 	@start=$$(date -u +%Y-%m-%dT%H:%M:%SZ) && \
 	curl -s -X POST $(SERVER_URL)/sync/seasons | python3 -m json.tool && \
@@ -126,7 +131,7 @@ sync-fixtures:
 	podman logs --since "$$start" orchestrator-service
 
 sync:
-	make sync-leagues && make sync-seasons && make sync-teams && make sync-fixtures
+	make sync-leagues && make sync-referees && make sync-seasons && make sync-teams && make sync-fixtures
 
 health:                                                                                                                                                                                                                                  
 	@echo "sportmonks-service: $$(curl -s http://localhost:8000/health | python3 -c "import sys,json; print(json.load(sys.stdin)['status'])" 2>/dev/null || echo "unreachable")"                                                      

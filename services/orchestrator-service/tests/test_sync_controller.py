@@ -87,6 +87,49 @@ class TestSyncSeasons:
             mock_database.bulk_upsert_seasons.assert_called_once_with(mock_seasons)
 
 
+class TestSyncReferees:
+    def test_sync_referees_returns_result(self, client, mock_referees, mock_bulk_result):
+        with (
+            patch("app.services.referee_sync_service.sportmonks_service_client") as mock_sportmonks,
+            patch("app.services.referee_sync_service.database_service_client") as mock_database,
+        ):
+            mock_sportmonks.get_referees = AsyncMock(return_value=mock_referees)
+            mock_database.bulk_upsert_referees = AsyncMock(return_value=mock_bulk_result)
+
+            response = client.post("/sync/referees")
+
+            assert response.status_code == 200
+            data = response.json()
+            assert data["entity"] == "referees"
+            assert data["created"] == 2
+            assert data["updated"] == 0
+            assert data["status"] == "completed"
+
+    def test_sync_referees_calls_sportmonks_service(self, client, mock_referees, mock_bulk_result):
+        with (
+            patch("app.services.referee_sync_service.sportmonks_service_client") as mock_sportmonks,
+            patch("app.services.referee_sync_service.database_service_client") as mock_database,
+        ):
+            mock_sportmonks.get_referees = AsyncMock(return_value=mock_referees)
+            mock_database.bulk_upsert_referees = AsyncMock(return_value=mock_bulk_result)
+
+            client.post("/sync/referees")
+
+            mock_sportmonks.get_referees.assert_called_once()
+
+    def test_sync_referees_sends_data_to_database_service(self, client, mock_referees, mock_bulk_result):
+        with (
+            patch("app.services.referee_sync_service.sportmonks_service_client") as mock_sportmonks,
+            patch("app.services.referee_sync_service.database_service_client") as mock_database,
+        ):
+            mock_sportmonks.get_referees = AsyncMock(return_value=mock_referees)
+            mock_database.bulk_upsert_referees = AsyncMock(return_value=mock_bulk_result)
+
+            client.post("/sync/referees")
+
+            mock_database.bulk_upsert_referees.assert_called_once_with(mock_referees)
+
+
 class TestSyncFixtures:
     def test_sync_fixtures_returns_result(self, client, mock_fixtures, mock_bulk_result):
         with (
